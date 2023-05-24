@@ -84,6 +84,9 @@
                                                     <fontDescription key="titleFontDescription" type="system" pointSize="12"/>
                                                     <color key="baseForegroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 </buttonConfiguration>
+                                                <connections>
+                                                    <action selector="clickedon:" destination="ZVb-ey-wno" eventType="touchDown" id="Z5t-vh-koq"/>
+                                                </connections>
                                             </button>
                                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="small" translatesAutoresizingMaskIntoConstraints="NO" id="Dr3-xG-mWw">
                                                 <rect key="frame" x="87" y="337" width="240" height="128"/>
@@ -92,18 +95,41 @@
                                                     <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="128" id="uLG-lc-AeO"/>
                                                 </constraints>
                                             </imageView>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="After bitmapping " textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="10" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dim-jT-vZf">
+                                                <rect key="frame" x="8" y="477" width="398" height="45"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="45" id="e5j-8P-Qx3"/>
+                                                </constraints>
+                                                <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                                <nil key="textColor"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="small" translatesAutoresizingMaskIntoConstraints="NO" id="g3A-4C-pRA">
+                                                <rect key="frame" x="87" y="534" width="240" height="128"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="height" constant="128" id="8No-bO-7mv"/>
+                                                    <constraint firstAttribute="height" relation="lessThanOrEqual" constant="128" id="ATG-eg-QWT"/>
+                                                    <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="128" id="kBb-OQ-TJc"/>
+                                                </constraints>
+                                            </imageView>
                                         </subviews>
                                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                         <constraints>
                                             <constraint firstAttribute="trailing" secondItem="Rg9-LR-lKB" secondAttribute="trailing" constant="8" id="2lp-4X-aem"/>
+                                            <constraint firstAttribute="trailing" secondItem="g3A-4C-pRA" secondAttribute="trailing" constant="87" id="5wg-Qc-2pN"/>
+                                            <constraint firstItem="dim-jT-vZf" firstAttribute="leading" secondItem="GoE-Ga-QdF" secondAttribute="leading" constant="8" id="ATt-Un-foC"/>
                                             <constraint firstItem="Dr3-xG-mWw" firstAttribute="top" secondItem="Rg9-LR-lKB" secondAttribute="bottom" constant="46" id="B54-iU-dCp"/>
+                                            <constraint firstAttribute="trailing" secondItem="dim-jT-vZf" secondAttribute="trailing" constant="8" id="DQ2-q7-Mb8"/>
+                                            <constraint firstItem="dim-jT-vZf" firstAttribute="top" secondItem="Dr3-xG-mWw" secondAttribute="bottom" constant="12" id="HOc-d5-MdJ"/>
                                             <constraint firstAttribute="trailing" secondItem="xl0-SI-ZUf" secondAttribute="trailing" constant="87" id="NZ5-xV-ZHw"/>
                                             <constraint firstItem="xl0-SI-ZUf" firstAttribute="leading" secondItem="GoE-Ga-QdF" secondAttribute="leading" constant="87" id="Pa5-1O-wDI"/>
                                             <constraint firstItem="Rg9-LR-lKB" firstAttribute="top" secondItem="xl0-SI-ZUf" secondAttribute="bottom" constant="30" id="X1T-Dh-ipK"/>
                                             <constraint firstItem="xl0-SI-ZUf" firstAttribute="top" secondItem="GoE-Ga-QdF" secondAttribute="top" constant="93" id="ZlQ-eG-T4b"/>
                                             <constraint firstItem="Dr3-xG-mWw" firstAttribute="leading" secondItem="GoE-Ga-QdF" secondAttribute="leading" constant="87" id="abz-L6-IHy"/>
                                             <constraint firstItem="Rg9-LR-lKB" firstAttribute="leading" secondItem="GoE-Ga-QdF" secondAttribute="leading" constant="8" id="dZK-vb-JFp"/>
+                                            <constraint firstItem="g3A-4C-pRA" firstAttribute="leading" secondItem="GoE-Ga-QdF" secondAttribute="leading" constant="87" id="moP-39-dtd"/>
                                             <constraint firstAttribute="trailing" secondItem="Dr3-xG-mWw" secondAttribute="trailing" constant="87" id="p80-iO-YxW"/>
+                                            <constraint firstItem="g3A-4C-pRA" firstAttribute="top" secondItem="dim-jT-vZf" secondAttribute="bottom" constant="12" id="s3z-tr-Aa0"/>
                                         </constraints>
                                     </view>
                                 </subviews>
@@ -132,6 +158,12 @@
                             <constraint firstItem="Wr5-ES-65H" firstAttribute="top" secondItem="UDg-f3-yNl" secondAttribute="top" id="dit-GG-8ra"/>
                         </constraints>
                     </view>
+                    <connections>
+                        <outlet property="clickbutton" destination="Rg9-LR-lKB" id="hVk-gW-6vf"/>
+                        <outlet property="firstimage" destination="xl0-SI-ZUf" id="wLw-z4-pOV"/>
+                        <outlet property="secondImage" destination="Dr3-xG-mWw" id="F2Y-Ht-MKJ"/>
+                        <outlet property="thirdImage" destination="g3A-4C-pRA" id="xhf-bP-izO"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="TQP-KJ-3db" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>

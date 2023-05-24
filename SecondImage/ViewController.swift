@@ -200,8 +200,8 @@ class ViewController: UIViewController ,  CBCentralManagerDelegate, CBPeripheral
                                                                             return
                                                                         }
                                         print("text")
-                                        ///peripheral.writeValue(Convert, for: characteristic, type: .withoutResponse)
-                                        ///printImageOnPrinter(rasterBytes: convertImageToBitmap2(image: image) ?? valrues, on: peripheral, with: characteristic)
+                                      peripheral.writeValue(Convert, for: characteristic, type: .withoutResponse)
+                                      // printImageOnPrinter(rasterBytes: convertImageToBitmap2(image: image) ?? valrues, on: peripheral, with: characteristic)
                                         /// var command: [UInt8] = []
                                        
                                         let  image1 = UIImage(named: "mysmall")
@@ -209,7 +209,7 @@ class ViewController: UIViewController ,  CBCentralManagerDelegate, CBPeripheral
 
                                        
                                                 
-                                        peripheral.writeValue(data, for: characteristic, type: .withoutResponse)
+                                        ///peripheral.writeValue(data, for: characteristic, type: .withoutResponse)
                                         print("")
                                         
                                               
