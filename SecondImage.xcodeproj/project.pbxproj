@@ -16,6 +16,7 @@
 		251286572A1DADDF0023707A /* SecondImageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 251286562A1DADDF0023707A /* SecondImageTests.swift */; };
 		251286612A1DADDF0023707A /* SecondImageUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 251286602A1DADDF0023707A /* SecondImageUITests.swift */; };
 		251286632A1DADDF0023707A /* SecondImageUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 251286622A1DADDF0023707A /* SecondImageUITestsLaunchTests.swift */; };
+		251286702A1E13710023707A /* ImageSecondView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2512866F2A1E13710023707A /* ImageSecondView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -49,6 +50,7 @@
 		2512865C2A1DADDF0023707A /* SecondImageUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SecondImageUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		251286602A1DADDF0023707A /* SecondImageUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecondImageUITests.swift; sourceTree = "<group>"; };
 		251286622A1DADDF0023707A /* SecondImageUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecondImageUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		2512866F2A1E13710023707A /* ImageSecondView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageSecondView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -102,6 +104,7 @@
 				2512863F2A1DADDE0023707A /* AppDelegate.swift */,
 				251286412A1DADDE0023707A /* SceneDelegate.swift */,
 				251286432A1DADDE0023707A /* ViewController.swift */,
+				2512866F2A1E13710023707A /* ImageSecondView.swift */,
 				251286452A1DADDE0023707A /* Main.storyboard */,
 				251286482A1DADDF0023707A /* Assets.xcassets */,
 				2512864A2A1DADDF0023707A /* LaunchScreen.storyboard */,
@@ -260,6 +263,7 @@
 			files = (
 				251286442A1DADDE0023707A /* ViewController.swift in Sources */,
 				251286402A1DADDE0023707A /* AppDelegate.swift in Sources */,
+				251286702A1E13710023707A /* ImageSecondView.swift in Sources */,
 				251286422A1DADDE0023707A /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

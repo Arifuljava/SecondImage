@@ -109,7 +109,8 @@ class ViewController: UIViewController ,  CBCentralManagerDelegate, CBPeripheral
                        let peripheral = discoveredPeripherals[indexPath.row]
                        let devicename = peripheral.identifier.uuidString
                      
-           
+                      let sec = storyboard?.instantiateViewController(identifier: "xccccc") as! ImageSecondView
+                                                      present(sec,animated: true)
                        
                    }
                        
@@ -176,6 +177,42 @@ class ViewController: UIViewController ,  CBCentralManagerDelegate, CBPeripheral
                                     if characteristic.properties.contains(.writeWithoutResponse) {
                                         printerCharacteristic = characteristic
                                       print("geeeeeee")
+                                        guard let image = UIImage(named: "mysmall") else { return  }
+                                                                                                  
+                                        print("tyy")
+                                                                                                    
+                                                                                                 
+                                                                       
+                                        guard let imageData = convertImageToBitmap(image : image) else {
+                                            
+                                        return
+                                            
+                                        }
+                                       //  peripheral.writeValue(imageData, for: characteristic, type: .withoutResponse)
+                                     
+                                        print("MyPrint dtaa : "+imageData.debugDescription)
+                                    
+                                        let valrues: [UInt8] = [1, 2, 3, 4]
+                                        let string = " Bangladesh, to the east of India on the Bay of Bengal, is a South Asian country marked by lush greenery and many waterways. Its Padma (Ganges), Meghna and Jamuna rivers create fertile plains, and travel by boat is common. On the southern coast, the Sundarbans, an enormous mangrove forest shared with Eastern India, is home to the royal Bengal tiger. \r\n\n\n\n\n\n\n"
+                                                                        
+                                        guard  let Convert = string.data(using: .utf8)else {
+                                                                            
+                                                                            return
+                                                                        }
+                                        print("text")
+                                        ///peripheral.writeValue(Convert, for: characteristic, type: .withoutResponse)
+                                        ///printImageOnPrinter(rasterBytes: convertImageToBitmap2(image: image) ?? valrues, on: peripheral, with: characteristic)
+                                        /// var command: [UInt8] = []
+                                       
+                                        let  image1 = UIImage(named: "mysmall")
+                                        guard let data = image1?.pngData() else { return  }
+
+                                       
+                                                
+                                        peripheral.writeValue(data, for: characteristic, type: .withoutResponse)
+                                        print("")
+                                        
+                                              
                                         
                                         break
                                     }
@@ -184,238 +221,312 @@ class ViewController: UIViewController ,  CBCentralManagerDelegate, CBPeripheral
                        
                         
                         
-                
+        
+                        
+                    
                   
                   
                 
              }
-   
-    func printMyImage(imageDtaget : Data, phe : CBPeripheral, chara : CBCharacteristic)
-    {
-        peripheral.writeValue(imageDtaget, for: chara, type: .withResponse)
-        
-    }
-    func converDuplicate(image : UIImage)  ->Data?
-    {
-        guard let imageget = image.cgImage else
-        {
+    func convertImageToBitmap2(image: UIImage) -> [UInt8]? {
+     
+        guard let cgImage = image.cgImage else {
+            print("Failed to get the CGImage from the image")
             return nil
         }
-        let width = imageget.width
-        let height = imageget.height
         
-        let  colorShape = CGColorSpaceCreateDeviceRGB()
-        let  bitmapInfo = CGBitmapInfo(rawValue: CGImageAlphaInfo.noneSkipFirst.rawValue)
-        let bytesPerPixcel = 4
-        let bytePerRow = bytesPerPixcel * width
+
+        let colorSpace = CGColorSpaceCreateDeviceRGB()
+        let bitmapInfo = CGBitmapInfo.byteOrder32Big.rawValue | CGImageAlphaInfo.premultipliedLast.rawValue
+        
+    
+        let bytesPerPixel = 4
         let bitsPerComponent = 8
-        var rawData = [UInt8](repeating: 0, count: height*bytePerRow)
-        var context = CGContext(data: &rawData, width: width, height: height, bitsPerComponent: bitsPerComponent, bytesPerRow: bytePerRow, space: colorShape, bitmapInfo: bitmapInfo.rawValue)
-        let  imageRect = CGRect(x: 0, y: 0, width: width, height: height)
-        context?.draw(imageget, in: imageRect)
-        return Data(bytes: &rawData, count: rawData.count)
+        
+       
+        let width = 40//cgImage.width
+        let height = 40 //cgImage.height
+        
+       
+        let pixelCount = width * height
+        
+      
+        let bitmapData = UnsafeMutablePointer<UInt8>.allocate(capacity: pixelCount * bytesPerPixel)
+        defer {
+            bitmapData.deallocate()
+        }
+        
+      
+        guard let bitmapContext = CGContext(data: bitmapData,
+                                            width: width,
+                                            height: height,
+                                            bitsPerComponent: bitsPerComponent,
+                                            bytesPerRow: width * bytesPerPixel,
+                                            space: colorSpace,
+                                            bitmapInfo: bitmapInfo) else {
+            print("Failed to create the bitmap context")
+            return nil
+        }
+        
+       
+        let rect = CGRect(x: 0, y: 0, width: width, height: height)
+        bitmapContext.draw(cgImage, in: rect)
         
         
+        if let rawPixelData = bitmapContext.data {
+          
+            let pixelData = Array(UnsafeBufferPointer(start: rawPixelData.bindMemory(to: UInt8.self, capacity: pixelCount * bytesPerPixel), count: pixelCount * bytesPerPixel))
+            
+            return pixelData
+        } else {
+            print("Failed to get the raw pixel data from the bitmap context")
+            return nil
+        }
     }
-           func convertImageToBitmap22(image: UIImage) -> Data? {
-               guard let cgImage = image.cgImage else {
-                   return nil
-               }
-               
-               let bitmapInfo = CGBitmapInfo(rawValue: CGImageAlphaInfo.none.rawValue)
-               let context = CGContext(data: nil, width: cgImage.width, height: cgImage.height, bitsPerComponent: 8, bytesPerRow: 0, space: CGColorSpaceCreateDeviceGray(), bitmapInfo: bitmapInfo.rawValue)
-               
-               guard let bitmapContext = context else {
-                   return nil
-               }
-               
-               let rect = CGRect(x: 0, y: 0, width: cgImage.width, height: cgImage.height)
-               bitmapContext.draw(cgImage, in: rect)
-               
-               guard let data = bitmapContext.data else {
-                   return nil
-               }
-               
-               return Data(bytes: data, count: cgImage.width * cgImage.height)
-           }
+    
+    func printImageOnPrinter(rasterBytes: [UInt8], on peripheral: CBPeripheral, with characteristic: CBCharacteristic) {
+          
+          //  command.append(120)
+         /*
+          var command: [UInt8] = []
+          command.append(0x1B)
+          command.append(0x2A)
+          command.append(0x21)
+          command.append(0x1d)
+       
+           command.append(0x68)
+          command.append(0x1d)
+          command.append(0x48)
+          command.append(0x01)
+          command.append(0x1d)
+          command.append(0x6B)
+          command.append(0x02)
+          command.append(0x00)
+          command.append(0x1D)
+          command.append(0x0E)
+          command.append(0x1C)
+          command.append(0x60)
+       
+           command.append(0x4D)
+     
+           command.append(0x53)
+           command.append(0x1C)   //command use cpcl
+           command.append(0x60)
+           command.append(0x7E)
+           command.append(0x7E)
+           command.append(0x1D)
+          command.append(0x76)
+           command.append(0x30)
+           command.append(0x00)
+          let width  = 40
+          let height = 40
+          let widthL=width/8%256
+          let widthH=width/256
+          let heightL=height/8%256
+          let heightH=height/256
+          let valrues: [UInt8] = [1, 2, 3, 4]
+         let new_vales1 = UInt8(widthL)
+          command.append(new_vales1)
+          let new_vales2 = UInt8(widthH)
+           command.append(new_vales2)
+         let  new_vales3 = UInt8(heightL)
+           command.append(new_vales3)
+         let  new_vales4 = UInt8(heightH)
+           command.append(new_vales4)
+      //raster bit is our main bit for bitmap
+      guard let image = UIImage(named: "mysmall") else { return  }
+      let  testing: [UInt8] = [1,2,3,4,5]
+      let mybitmapvalues : [UInt8] = convertImageToBitmap2(image: image) ?? testing
+      command.append(UInt8(mybitmapvalues.count & 0xFF))
+      
+      
+      command.append(UInt8((mybitmapvalues.count >> 8) & 0xFF))
+      command.append(0x1C)
+      command.append(0x5E)
+      //over
+      //send the command
+      
+         command.append(UInt8(rasterBytes.count & 0xFF))
+         command.append(UInt8((rasterBytes.count >> 8) & 0xFF))
+         command += rasterBytes
+         
+         let data = Data(bytes: command)
+         print("Bitmap Complete....")
+         guard let image = UIImage(named: "mysmall") else { return  }
+         
+       ///  peripheral.writeValue(data, for: characteristic, type: .withoutResponse)
+         guard let imageData = convertImageToBitmap(image : image) else { return }
+         peripheral.writeValue(data, for: characteristic, type: .withoutResponse)
+          */
+            //BITMAP WIDHT
+        
+        var command: [UInt8] = []
+        command.append(0x1B)
+        command.append(0x2A)
+        let width  = 40
+        let height = 40
+        let widthL=width/8%256
+        let widthH=width/256
+        let heightL=height/8%256
+        let heightH=height/256
+        let valrues: [UInt8] = [1, 2, 3, 4]
+       let new_vales1 = UInt8(widthL)
+        command.append(new_vales1)
+        let new_vales2 = UInt8(widthH)
+         command.append(new_vales2)
+       let  new_vales3 = UInt8(heightL)
+         command.append(new_vales3)
+       let  new_vales4 = UInt8(heightH)
+         command.append(new_vales4)
+    //raster bit is our main bit for bitmap
+    guard let image = UIImage(named: "mysmall") else { return  }
+    let  testing: [UInt8] = [1,2,3,4,5]
+    let mybitmapvalues : [UInt8] = convertImageToBitmap2(image: image) ?? testing
+    command.append(UInt8(mybitmapvalues.count & 0xFF))
+    
+    
+    command.append(UInt8((mybitmapvalues.count >> 8) & 0xFF))
+    command.append(0x1C)
+    command.append(0x5E)
+    //over
+    //send the command
+    
+       command.append(UInt8(rasterBytes.count & 0xFF))
+       command.append(UInt8((rasterBytes.count >> 8) & 0xFF))
+       command += rasterBytes
+       
+       let data = Data(bytes: command)
+       print("Bitmap Complete....")
+       guard let image = UIImage(named: "mysmall") else { return  }
+       
+     ///  peripheral.writeValue(data, for: characteristic, type: .withoutResponse)
+       guard let imageData = convertImageToBitmap(image : image) else { return }
+       peripheral.writeValue(data, for: characteristic, type: .withoutResponse)
+        
+        
+       }
+      
+   }
+func convertImageToBitmap(image: UIImage) -> Data? {
+           print("get")
+           guard let cgImage = image.cgImage else { return nil }
            
-           func convertImageToBitmap11(image: UIImage) -> [UInt8]? {
-               guard let cgImage = image.cgImage else { return nil }
-               
-               let width = cgImage.width
-               let height = cgImage.height
-               
-               let colorSpace = CGColorSpaceCreateDeviceRGB()
-               let bytesPerPixel = 4
-               let bytesPerRow = bytesPerPixel * width
-               let bitsPerComponent = 8
-               let bitmapInfo = CGBitmapInfo.byteOrder32Little.rawValue | CGImageAlphaInfo.premultipliedLast.rawValue
-               
-               var bitmapData = [UInt8](repeating: 0, count: width * height * bytesPerPixel)
-               
-               guard let context = CGContext(data: &bitmapData,
-                                             width: width,
-                                             height: height,
-                                             bitsPerComponent: bitsPerComponent,
-                                             bytesPerRow: bytesPerRow,
-                                             space: colorSpace,
-                                             bitmapInfo: bitmapInfo) else {
-                   return nil
-               }
-               
-               let rect = CGRect(x: 0, y: 0, width: width, height: height)
-               context.draw(cgImage, in: rect)
-               
-               return bitmapData
-           }
+           let width = 40 //cgImage.width
+           let height = 40 //cgImage.height
+           let colorSpace = CGColorSpaceCreateDeviceGray()
            
-  
-          func convertImageToBitmap(image: UIImage) -> Data? {
-                  print("get")
-                  guard let cgImage = image.cgImage else { return nil }
-                  
+           let bitmapInfo = CGBitmapInfo(rawValue: CGImageAlphaInfo.none.rawValue)
+           guard let context = CGContext(data: nil,
+                                         width: width,
+                                         height: height,
+                                         bitsPerComponent: 8,
+                                         bytesPerRow: 0,
+                                         space: colorSpace,
+                                         bitmapInfo: bitmapInfo.rawValue) else {
+               return nil
+           }
+          
+           
+           let rect = CGRect(x: 0, y: 0, width: width, height: height)
+           context.draw(cgImage, in: rect)
+           guard let bitmapData = context.data else { return nil }
+           
+           let dataSize = width * height
+           let buffer = UnsafeBufferPointer(start: bitmapData.assumingMemoryBound(to: UInt8.self), count: dataSize)
+           print("Bitmap Value : "+buffer.debugDescription)
+           
+           return Data(buffer: buffer)
+       }
+   
+
+   
+  /*
+   func printMyImage(imageDtaget : Data, phe : CBPeripheral, chara : CBCharacteristic)
+   {
+       peripheral.writeValue(imageDtaget, for: chara, type: .withResponse)
+       
+   }
+   func converDuplicate(image : UIImage)  ->Data?
+   {
+       guard let imageget = image.cgImage else
+       {
+           return nil
+       }
+       let width = imageget.width
+       let height = imageget.height
+       
+       let  colorShape = CGColorSpaceCreateDeviceRGB()
+       let  bitmapInfo = CGBitmapInfo(rawValue: CGImageAlphaInfo.noneSkipFirst.rawValue)
+       let bytesPerPixcel = 4
+       let bytePerRow = bytesPerPixcel * width
+       let bitsPerComponent = 8
+       var rawData = [UInt8](repeating: 0, count: height*bytePerRow)
+       var context = CGContext(data: &rawData, width: width, height: height, bitsPerComponent: bitsPerComponent, bytesPerRow: bytePerRow, space: colorShape, bitmapInfo: bitmapInfo.rawValue)
+       let  imageRect = CGRect(x: 0, y: 0, width: width, height: height)
+       context?.draw(imageget, in: imageRect)
+       return Data(bytes: &rawData, count: rawData.count)
+       
+       
+   }
+          func convertImageToBitmap22(image: UIImage) -> Data? {
+              guard let cgImage = image.cgImage else {
+                  return nil
+              }
+              
+              let bitmapInfo = CGBitmapInfo(rawValue: CGImageAlphaInfo.none.rawValue)
+              let context = CGContext(data: nil, width: cgImage.width, height: cgImage.height, bitsPerComponent: 8, bytesPerRow: 0, space: CGColorSpaceCreateDeviceGray(), bitmapInfo: bitmapInfo.rawValue)
+              
+              guard let bitmapContext = context else {
+                  return nil
+              }
+              
+              let rect = CGRect(x: 0, y: 0, width: cgImage.width, height: cgImage.height)
+              bitmapContext.draw(cgImage, in: rect)
+              
+              guard let data = bitmapContext.data else {
+                  return nil
+              }
+              
+              return Data(bytes: data, count: cgImage.width * cgImage.height)
+          }
+          
+          func convertImageToBitmap11(image: UIImage) -> [UInt8]? {
+              guard let cgImage = image.cgImage else { return nil }
+              
               let width = cgImage.width
               let height = cgImage.height
-                  let colorSpace = CGColorSpaceCreateDeviceGray()
-                  
-                  let bitmapInfo = CGBitmapInfo(rawValue: CGImageAlphaInfo.none.rawValue)
-                  guard let context = CGContext(data: nil,
-                                                width: width,
-                                                height: height,
-                                                bitsPerComponent: 8,
-                                                bytesPerRow: 0,
-                                                space: colorSpace,
-                                                bitmapInfo: bitmapInfo.rawValue) else {
-                      return nil
-                  }
-                 
-                  
-                  let rect = CGRect(x: 0, y: 0, width: width, height: height)
-                  context.draw(cgImage, in: rect)
-                  guard let bitmapData = context.data else { return nil }
-                  
-                  let dataSize = width * height
-                  let buffer = UnsafeBufferPointer(start: bitmapData.assumingMemoryBound(to: UInt8.self), count: dataSize)
-                  print("Bitmap Value : "+buffer.debugDescription)
-                  
-                  return Data(buffer: buffer)
+              
+              let colorSpace = CGColorSpaceCreateDeviceRGB()
+              let bytesPerPixel = 4
+              let bytesPerRow = bytesPerPixel * width
+              let bitsPerComponent = 8
+              let bitmapInfo = CGBitmapInfo.byteOrder32Little.rawValue | CGImageAlphaInfo.premultipliedLast.rawValue
+              
+              var bitmapData = [UInt8](repeating: 0, count: width * height * bytesPerPixel)
+              
+              guard let context = CGContext(data: &bitmapData,
+                                            width: width,
+                                            height: height,
+                                            bitsPerComponent: bitsPerComponent,
+                                            bytesPerRow: bytesPerRow,
+                                            space: colorSpace,
+                                            bitmapInfo: bitmapInfo) else {
+                  return nil
               }
-       
-   
-        
-        }
-    
+              
+              let rect = CGRect(x: 0, y: 0, width: width, height: height)
+              context.draw(cgImage, in: rect)
+              
+              return bitmapData
+          }
+          
  
-    
-  
-           
-           func printImageOnPrinter(rasterBytes: [UInt8], on peripheral: CBPeripheral, with characteristic: CBCharacteristic) {
-                  var command: [UInt8] = []
-                  command.append(0x1B)
-                  command.append(0x2A)
-                  command.append(0x21)
-                  command.append(0x1d)
-               
-               command.append(0x68)
-             //  command.append(120)
-               command.append(0x1d)
-               command.append(0x48)   //command use cpcl
-               command.append(0x01)
-               command.append(0x1d)
-               command.append(0x6B)
-               command.append(0x02)
-               command.append(0x00)
-               
-               
-               //comand esc^^^^^^^^^
-               command.append(0x1D)
-               command.append(0x0E)
-               command.append(0x1C)
-               command.append(0x60)
-            
-                command.append(0x4D)
-          
-                command.append(0x53)
-                command.append(0x1C)   //command use cpcl
-                command.append(0x60)
-                command.append(0x7E)
-                command.append(0x7E)
-                command.append(0x1D)
-               command.append(0x76)
-                command.append(0x30)
-                command.append(0x00)
-               //BITMAP WIDHT
-               let width  = 40
-               let height = 40
-               let widthL=width/8%256
-               let widthH=width/256
-               let heightL=height/8%256
-               let heightH=height/256
-               let valrues: [UInt8] = [1, 2, 3, 4]
-              let new_vales1 = UInt8(widthL)
-               command.append(new_vales1)
-               let new_vales2 = UInt8(widthH)
-                command.append(new_vales2)
-              let  new_vales3 = UInt8(heightL)
-                command.append(new_vales3)
-              let  new_vales4 = UInt8(heightH)
-                command.append(new_vales4)
-               
-               
-               //this  place add bitmapdata
-               //here
-               //this is our bitmap data
-               guard let image = UIImage(named: "mysmall") else { return  }
-               guard let imageData = convertImageToBitmap(image : image) else { return }
-               //th is is on data formate
-              //second
-               let mydata : Data = imageData
-               var unit8 = [UInt8](repeating: 0, count : mydata.count)
-               mydata.withUnsafeBytes{
-                   rawBufferPoint in
-                   let bufferPoint  =  rawBufferPoint.bindMemory(to: UInt8.self)
-                   unit8 = Array(bufferPoint)
-               }
-               let  again = mydata.withUnsafeBytes{
-                   [UInt8](UnsafeBufferPointer(start: $0, count: mydata.count))
-               }
-               let  dafta = mydata // Sample data
-
-               
-               //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-               
-               
-                  command.append(UInt8(rasterBytes.count & 0xFF))
-                  command.append(UInt8((rasterBytes.count >> 8) & 0xFF))//what is this?
-                  command += rasterBytes
-                  
-                  let data = Data(bytes: command)
-                  print("Bitmap Complete....")
-                 
-peripheral.writeValue(data, for: characteristic, type: .withoutResponse)
-                  
-                  peripheral.writeValue(imageData, for: characteristic, type: .withoutResponse)
-                
-              }
-             
-          
-
-           var context = CIContext(options: nil)
-           func convertImageToDifferentColorScale(with originalImage:UIImage, imageStyle:String) -> UIImage {
-               let currentFilter = CIFilter(name: imageStyle)
-               currentFilter!.setValue(CIImage(image: originalImage), forKey: kCIInputImageKey)
-               let output = currentFilter!.outputImage
-               let context = CIContext(options: nil)
-               let cgimg = context.createCGImage(output!,from: output!.extent)
-               let processedImage = UIImage(cgImage: cgimg!)
-               return processedImage
-           }
-           func convertImageToBitmap(image: UIImage) -> Data? {
+         func convertImageToBitmap(image: UIImage) -> Data? {
                  print("get")
                  guard let cgImage = image.cgImage else { return nil }
                  
-                 let width = cgImage.width
-                 let height = cgImage.height
+             let width = cgImage.width
+             let height = cgImage.height
                  let colorSpace = CGColorSpaceCreateDeviceGray()
                  
                  let bitmapInfo = CGBitmapInfo(rawValue: CGImageAlphaInfo.none.rawValue)
@@ -437,15 +548,156 @@ peripheral.writeValue(data, for: characteristic, type: .withoutResponse)
                  let dataSize = width * height
                  let buffer = UnsafeBufferPointer(start: bitmapData.assumingMemoryBound(to: UInt8.self), count: dataSize)
                  print("Bitmap Value : "+buffer.debugDescription)
-              
-               
                  
                  return Data(buffer: buffer)
              }
+      
+  
+       
+       }
+   
+
+   
+ 
+          
+          func printImageOnPrinter(rasterBytes: [UInt8], on peripheral: CBPeripheral, with characteristic: CBCharacteristic) {
+                 var command: [UInt8] = []
+                 command.append(0x1B)
+                 command.append(0x2A)
+                 command.append(0x21)
+                 command.append(0x1d)
+              
+              command.append(0x68)
+            //  command.append(120)
+              command.append(0x1d)
+              command.append(0x48)   //command use cpcl
+              command.append(0x01)
+              command.append(0x1d)
+              command.append(0x6B)
+              command.append(0x02)
+              command.append(0x00)
+              
+              
+              //comand esc^^^^^^^^^
+              command.append(0x1D)
+              command.append(0x0E)
+              command.append(0x1C)
+              command.append(0x60)
+           
+               command.append(0x4D)
+         
+               command.append(0x53)
+               command.append(0x1C)   //command use cpcl
+               command.append(0x60)
+               command.append(0x7E)
+               command.append(0x7E)
+               command.append(0x1D)
+              command.append(0x76)
+               command.append(0x30)
+               command.append(0x00)
+              //BITMAP WIDHT
+              let width  = 40
+              let height = 40
+              let widthL=width/8%256
+              let widthH=width/256
+              let heightL=height/8%256
+              let heightH=height/256
+              let valrues: [UInt8] = [1, 2, 3, 4]
+             let new_vales1 = UInt8(widthL)
+              command.append(new_vales1)
+              let new_vales2 = UInt8(widthH)
+               command.append(new_vales2)
+             let  new_vales3 = UInt8(heightL)
+               command.append(new_vales3)
+             let  new_vales4 = UInt8(heightH)
+               command.append(new_vales4)
+              
+              
+              //this  place add bitmapdata
+              //here
+              //this is our bitmap data
+              guard let image = UIImage(named: "mysmall") else { return  }
+              guard let imageData = convertImageToBitmap(image : image) else { return }
+              //th is is on data formate
+             //second
+              let mydata : Data = imageData
+              var unit8 = [UInt8](repeating: 0, count : mydata.count)
+              mydata.withUnsafeBytes{
+                  rawBufferPoint in
+                  let bufferPoint  =  rawBufferPoint.bindMemory(to: UInt8.self)
+                  unit8 = Array(bufferPoint)
+              }
+              let  again = mydata.withUnsafeBytes{
+                  [UInt8](UnsafeBufferPointer(start: $0, count: mydata.count))
+              }
+              let  dafta = mydata // Sample data
+
+              
+              //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+              
+              
+                 command.append(UInt8(rasterBytes.count & 0xFF))
+                 command.append(UInt8((rasterBytes.count >> 8) & 0xFF))//what is this?
+                 command += rasterBytes
+                 
+                 let data = Data(bytes: command)
+                 print("Bitmap Complete....")
+                
+peripheral.writeValue(data, for: characteristic, type: .withoutResponse)
+                 
+                 peripheral.writeValue(imageData, for: characteristic, type: .withoutResponse)
+               
+             }
+            
+         
+
+          var context = CIContext(options: nil)
+          func convertImageToDifferentColorScale(with originalImage:UIImage, imageStyle:String) -> UIImage {
+              let currentFilter = CIFilter(name: imageStyle)
+              currentFilter!.setValue(CIImage(image: originalImage), forKey: kCIInputImageKey)
+              let output = currentFilter!.outputImage
+              let context = CIContext(options: nil)
+              let cgimg = context.createCGImage(output!,from: output!.extent)
+              let processedImage = UIImage(cgImage: cgimg!)
+              return processedImage
+          }
+          func convertImageToBitmap(image: UIImage) -> Data? {
+                print("get")
+                guard let cgImage = image.cgImage else { return nil }
+                
+                let width = cgImage.width
+                let height = cgImage.height
+                let colorSpace = CGColorSpaceCreateDeviceGray()
+                
+                let bitmapInfo = CGBitmapInfo(rawValue: CGImageAlphaInfo.none.rawValue)
+                guard let context = CGContext(data: nil,
+                                              width: width,
+                                              height: height,
+                                              bitsPerComponent: 8,
+                                              bytesPerRow: 0,
+                                              space: colorSpace,
+                                              bitmapInfo: bitmapInfo.rawValue) else {
+                    return nil
+                }
+               
+                
+                let rect = CGRect(x: 0, y: 0, width: width, height: height)
+                context.draw(cgImage, in: rect)
+                guard let bitmapData = context.data else { return nil }
+                
+                let dataSize = width * height
+                let buffer = UnsafeBufferPointer(start: bitmapData.assumingMemoryBound(to: UInt8.self), count: dataSize)
+                print("Bitmap Value : "+buffer.debugDescription)
+             
+              
+                
+                return Data(buffer: buffer)
+            }
 
 public extension Data {
-    
-    func to<T>(_ type: T.Type) -> T {
-        return self.withUnsafeBytes { $0.pointee }
-    }
-}
+   
+   func to<T>(_ type: T.Type) -> T {
+       return self.withUnsafeBytes { $0.pointee }
+   }
+   */
+
