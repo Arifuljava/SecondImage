@@ -9,8 +9,7 @@ import UIKit
 
 class ImageSecondView: UIViewController {
     @IBOutlet weak var secondImage: UIImageView!
-    
-    @IBOutlet weak var thirdImage: UIImageView!
+    @IBOutlet weak var forth: UIImageView!
     @IBOutlet weak var clickbutton: UIButton!
     @IBOutlet weak var firstimage: UIImageView!
     override func viewDidLoad() {
@@ -24,12 +23,47 @@ class ImageSecondView: UIViewController {
         let newImage = convertImageToDifferentColorScale(with: UIImage(named: "small")!, imageStyle: "CIPhotoEffectNoir")
                secondImage.image = newImage
         convertImageToBitmap(image: newImage)
-        let dataaa : Data = newImage.cgImag
+        guard let imageDatdda = convertImageToBitmap(image : newImage) else {
+                                                                        return }
         
-        let  imageData : Data = convertImageToBitmap3(image: newImage) ?? dataaa
-        print(imageData.debugDescription)
+       
+        //print(imageData.debugDescription)
+       
+        guard let inmageDta = convertImageToBitmap22(image: newImage) else {
+            return
+        }
+        let datata = Data(inmageDta)
+        
+      
+        let  imageData : Data = convertImageToBitmap3(image: newImage) ?? datata
+       // convertBitmapToImage(bitmapData: imageData, width: 40, height: 40)
+        print("Function gettings "+imageData.debugDescription)
+        convertImageToBitmap22(image: newImage)
     }
-    
+    func convertImageToBitmap22(image: UIImage ) -> Data? {
+           guard let cgImage = image.cgImage else {
+               return nil
+           }
+           
+           let bitmapInfo = CGBitmapInfo(rawValue: CGImageAlphaInfo.none.rawValue)
+           let context = CGContext(data: nil, width: cgImage.width, height: cgImage.height, bitsPerComponent: 8, bytesPerRow: 0, space: CGColorSpaceCreateDeviceGray(), bitmapInfo: bitmapInfo.rawValue)
+           
+           guard let bitmapContext = context else {
+               return nil
+           }
+           
+           let rect = CGRect(x: 0, y: 0, width: cgImage.width, height: cgImage.height)
+           bitmapContext.draw(cgImage, in: rect)
+           
+           guard let data = bitmapContext.data else {
+               return nil
+           }
+        print(Data(bytes: data, count: cgImage.width * cgImage.height))
+        convertBitmapToImage(bitmapData: Data(bytes: data, count: cgImage.width * cgImage.height), width: 40, height: 40)
+        print("Getting")
+           
+           return Data(bytes: data, count: cgImage.width * cgImage.height)
+       }
     var context = CIContext(options: nil)
         func convertImageToDifferentColorScale(with originalImage:UIImage, imageStyle:String) -> UIImage {
             let currentFilter = CIFilter(name: imageStyle)
@@ -71,7 +105,9 @@ class ImageSecondView: UIViewController {
         
         // Create a UIImage from the bitmap image
         let bitmapUIImage = UIImage(cgImage: bitmapImage)
-        print(bitmapUIImage)
+        print("Bitmap Image ")
+        forth.image = image
+        print(bitmapImage)
         
         
         return bitmapUIImage
@@ -96,6 +132,8 @@ class ImageSecondView: UIViewController {
                                     intent: .defaultIntent) else { return nil }
         
         let image = UIImage(cgImage: cgImage)
+        forth.image = image
+        
         return image
     }
 
@@ -127,6 +165,7 @@ class ImageSecondView: UIViewController {
                   let dataSize = width * height
                   let buffer = UnsafeBufferPointer(start: bitmapData.assumingMemoryBound(to: UInt8.self), count: dataSize)
                   print("Bitmap Value : "+buffer.debugDescription)
+         
                   
                   return Data(buffer: buffer)
               }

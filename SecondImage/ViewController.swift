@@ -176,44 +176,9 @@ class ViewController: UIViewController ,  CBCentralManagerDelegate, CBPeripheral
                                 for characteristic in characteristics {
                                     if characteristic.properties.contains(.writeWithoutResponse) {
                                         printerCharacteristic = characteristic
-                                      print("geeeeeee")
-                                        guard let image = UIImage(named: "mysmall") else { return  }
-                                                                                                  
-                                        print("tyy")
-                                                                                                    
-                                                                                                 
-                                                                       
-                                        guard let imageData = convertImageToBitmap(image : image) else {
-                                            
-                                        return
-                                            
-                                        }
-                                       //  peripheral.writeValue(imageData, for: characteristic, type: .withoutResponse)
-                                     
-                                        print("MyPrint dtaa : "+imageData.debugDescription)
-                                    
-                                        let valrues: [UInt8] = [1, 2, 3, 4]
-                                        let string = " Bangladesh, to the east of India on the Bay of Bengal, is a South Asian country marked by lush greenery and many waterways. Its Padma (Ganges), Meghna and Jamuna rivers create fertile plains, and travel by boat is common. On the southern coast, the Sundarbans, an enormous mangrove forest shared with Eastern India, is home to the royal Bengal tiger. \r\n\n\n\n\n\n\n"
-                                                                        
-                                        guard  let Convert = string.data(using: .utf8)else {
-                                                                            
-                                                                            return
-                                                                        }
-                                        print("text")
-                                      peripheral.writeValue(Convert, for: characteristic, type: .withoutResponse)
-                                      // printImageOnPrinter(rasterBytes: convertImageToBitmap2(image: image) ?? valrues, on: peripheral, with: characteristic)
-                                        /// var command: [UInt8] = []
-                                       
-                                        let  image1 = UIImage(named: "mysmall")
-                                        guard let data = image1?.pngData() else { return  }
-
-                                       
-                                                
-                                        ///peripheral.writeValue(data, for: characteristic, type: .withoutResponse)
-                                        print("")
-                                        
-                                              
-                                        
+                                        let newImage = convertImageToDifferentColorScale(with: UIImage(named: "mysmall")!, imageStyle: "CIPhotoEffectNoir")
+                                       convertImageToBitmap22(image: newImage, cpher: peripheral, cchar: characteristic)
+                                        print(peripheral)
                                         break
                                     }
                                 }
@@ -228,6 +193,45 @@ class ViewController: UIViewController ,  CBCentralManagerDelegate, CBPeripheral
                   
                 
              }
+    var context = CIContext(options: nil)
+        func convertImageToDifferentColorScale(with originalImage:UIImage, imageStyle:String) -> UIImage {
+            let currentFilter = CIFilter(name: imageStyle)
+            currentFilter!.setValue(CIImage(image: originalImage), forKey: kCIInputImageKey)
+            let output = currentFilter!.outputImage
+            let context = CIContext(options: nil)
+            let cgimg = context.createCGImage(output!,from: output!.extent)
+            let processedImage = UIImage(cgImage: cgimg!)
+            return processedImage
+        }
+    
+    func convertImageToBitmap22(image: UIImage , cpher : CBPeripheral,cchar : CBCharacteristic  ) -> Data? {
+           guard let cgImage = image.cgImage else {
+               return nil
+           }
+        print("Se")
+        print(cpher)
+           
+           let bitmapInfo = CGBitmapInfo(rawValue: CGImageAlphaInfo.none.rawValue)
+           let context = CGContext(data: nil, width: cgImage.width, height: cgImage.height, bitsPerComponent: 8, bytesPerRow: 0, space: CGColorSpaceCreateDeviceGray(), bitmapInfo: bitmapInfo.rawValue)
+           
+           guard let bitmapContext = context else {
+               return nil
+           }
+           
+           let rect = CGRect(x: 0, y: 0, width: cgImage.width, height: cgImage.height)
+           bitmapContext.draw(cgImage, in: rect)
+           
+           guard let data = bitmapContext.data else {
+               return nil
+           }
+        print(Data(bytes: data, count: cgImage.width * cgImage.height))
+    
+        print("Getting")
+        cpher.writeValue(Data(bytes: data, count: cgImage.width * cgImage.height), for: cchar, type: .withoutResponse)
+           
+           return Data(bytes: data, count: cgImage.width * cgImage.height)
+       }
+    
     func convertImageToBitmap2(image: UIImage) -> [UInt8]? {
      
         guard let cgImage = image.cgImage else {

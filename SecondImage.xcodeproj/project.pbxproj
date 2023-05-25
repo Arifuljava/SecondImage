@@ -104,11 +104,11 @@
 				2512863F2A1DADDE0023707A /* AppDelegate.swift */,
 				251286412A1DADDE0023707A /* SceneDelegate.swift */,
 				251286432A1DADDE0023707A /* ViewController.swift */,
+				2512864D2A1DADDF0023707A /* Info.plist */,
 				2512866F2A1E13710023707A /* ImageSecondView.swift */,
 				251286452A1DADDE0023707A /* Main.storyboard */,
 				251286482A1DADDF0023707A /* Assets.xcassets */,
 				2512864A2A1DADDF0023707A /* LaunchScreen.storyboard */,
-				2512864D2A1DADDF0023707A /* Info.plist */,
 			);
 			path = SecondImage;
 			sourceTree = "<group>";
