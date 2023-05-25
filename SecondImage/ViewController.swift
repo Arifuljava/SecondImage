@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Printer
 import CoreBluetooth
 
 
@@ -177,8 +178,25 @@ class ViewController: UIViewController ,  CBCentralManagerDelegate, CBPeripheral
                                     if characteristic.properties.contains(.writeWithoutResponse) {
                                         printerCharacteristic = characteristic
                                         let newImage = convertImageToDifferentColorScale(with: UIImage(named: "mysmall")!, imageStyle: "CIPhotoEffectNoir")
-                                       convertImageToBitmap22(image: newImage, cpher: peripheral, cchar: characteristic)
+                                       //convertImageToBitmap22(image: newImage, cpher: peripheral, cchar: characteristic)
                                         print(peripheral)
+                                       guard let  imageData = convertImageToBitmap2(image: newImage) else {
+                                            return
+                                        }
+                                        let  imageMainData = Data(imageData)
+                                        let  ui8demo : [UInt8] = [1,2,3,4]
+                                        let arrayUnit = imageMainData.withUnsafeBytes{Array($0)}
+                                       // printImageOnPrinter(rasterBytes: arrayUnit, on: peripheral, with: characteristic)
+                                        
+                                        var dataArr : [Data] = []
+                                        dataArr.append(Data(bytes: [27, 33, 99 ])) // where n can be set to be a number between 0 and 99 i guess
+                                        dataArr.append("text to be printed\n".data(using: String.Encoding.utf8)!)
+
+                                        for data in dataArr {
+                                          peripheral.writeValue(data, for: characteristic, type: CBCharacteristicWriteType.withoutResponse)
+                                        }
+                                        
+                                       
                                         break
                                     }
                                 }
@@ -203,7 +221,45 @@ class ViewController: UIViewController ,  CBCentralManagerDelegate, CBPeripheral
             let processedImage = UIImage(cgImage: cgimg!)
             return processedImage
         }
-    
+    func convertImageToBitmap(image: UIImage) -> UIImage? {
+        // Create a bitmap context with the same size as the image
+        guard let cgImage = image.cgImage else { return nil }
+        let width = cgImage.width
+        let height = cgImage.height
+        print(width.description)
+        print(height.description)
+        
+        let bytesPerPixel = 4 // 1 byte for each RGBA component
+        let bytesPerRow = bytesPerPixel * width
+        let bitsPerComponent = 8
+        
+        let bitmapInfo = CGBitmapInfo.byteOrder32Big.rawValue | CGImageAlphaInfo.premultipliedLast.rawValue
+        
+        guard let context = CGContext(data: nil,
+                                      width: width,
+                                      height: height,
+                                      bitsPerComponent: bitsPerComponent,
+                                      bytesPerRow: bytesPerRow,
+                                      space: CGColorSpaceCreateDeviceRGB(),
+                                      bitmapInfo: bitmapInfo) else { return nil }
+        
+        // Draw the image in the bitmap context
+        let rect = CGRect(x: 0, y: 0, width: width, height: height)
+        context.draw(cgImage, in: rect)
+        
+        // Retrieve the bitmap image from the context
+        guard let bitmapImage = context.makeImage() else { return nil }
+        
+        // Create a UIImage from the bitmap image
+        let bitmapUIImage = UIImage(cgImage: bitmapImage)
+        print("Bitmap Image ")
+        let  compress : CGFloat =  0.4
+        let  imageMainData = image.jpegData(compressionQuality: compress)
+        
+        
+        
+        return bitmapUIImage
+    }
     func convertImageToBitmap22(image: UIImage , cpher : CBPeripheral,cchar : CBCharacteristic  ) -> Data? {
            guard let cgImage = image.cgImage else {
                return nil
@@ -227,7 +283,11 @@ class ViewController: UIViewController ,  CBCentralManagerDelegate, CBPeripheral
         print(Data(bytes: data, count: cgImage.width * cgImage.height))
     
         print("Getting")
-        cpher.writeValue(Data(bytes: data, count: cgImage.width * cgImage.height), for: cchar, type: .withoutResponse)
+        let  compress : CGFloat =  0.4
+        let  imageMainData = image.jpegData(compressionQuality: compress)
+        let bata : Data = Data(bytes: data, count: cgImage.width * cgImage.height)
+        
+        cpher.writeValue(imageMainData ?? bata, for: cchar, type: .withoutResponse)
            
            return Data(bytes: data, count: cgImage.width * cgImage.height)
        }
@@ -365,10 +425,26 @@ class ViewController: UIViewController ,  CBCentralManagerDelegate, CBPeripheral
             //BITMAP WIDHT
         
         var command: [UInt8] = []
-        command.append(0x1B)
-        command.append(0x2A)
-        let width  = 40
-        let height = 40
+        //command.append(0x1B)
+        //command.append(0x2A)
+        command.append(0x1D)
+        command.append(0x0E)
+        command.append(0x1C)
+        command.append(0x60)
+     
+         command.append(0x4D)
+   
+         command.append(0x53)
+         command.append(0x1C)   //command use cpcl
+         command.append(0x60)
+         command.append(0x7E)
+         command.append(0x7E)
+         command.append(0x1D)
+        command.append(0x76)
+         command.append(0x30)
+         command.append(0x00)
+        let width  = 160
+        let height = 160
         let widthL=width/8%256
         let widthH=width/256
         let heightL=height/8%256
@@ -400,6 +476,7 @@ class ViewController: UIViewController ,  CBCentralManagerDelegate, CBPeripheral
        command += rasterBytes
        
        let data = Data(bytes: command)
+        print(command)
        print("Bitmap Complete....")
        guard let image = UIImage(named: "mysmall") else { return  }
        
@@ -441,6 +518,7 @@ func convertImageToBitmap(image: UIImage) -> Data? {
            
            return Data(buffer: buffer)
        }
+
    
 
    
