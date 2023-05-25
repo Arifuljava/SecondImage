@@ -18,7 +18,24 @@ class ImageSecondView: UIViewController {
         // Do any additional setup after loading the view.
     }
     
+    func printImage(image: UIImage) {
+        // Check if printing is available on the device
+        guard UIPrintInteractionController.isPrintingAvailable else {
+            print("Printing is not available on this device.")
+            return
+        }
+        let printController = UIPrintInteractionController.shared
+        
+    
+        let printInfo = UIPrintInfo.printInfo()
+        printInfo.outputType = .general
+        printInfo.jobName = "My Image"
+        printController.printInfo = printInfo
+        printController.printingItem = image
+        printController.present(animated: true, completionHandler: nil)
+    }
 
+    
     @IBAction func clickedon(_ sender: UIButton) {
         let newImage = convertImageToDifferentColorScale(with: UIImage(named: "small")!, imageStyle: "CIPhotoEffectNoir")
                secondImage.image = newImage
@@ -31,6 +48,8 @@ class ImageSecondView: UIViewController {
        
         guard let inmageDta = convertImageToBitmap22(image: newImage) else {
             return
+            
+            
         }
         let datata = Data(inmageDta)
         
@@ -39,6 +58,7 @@ class ImageSecondView: UIViewController {
        // convertBitmapToImage(bitmapData: imageData, width: 40, height: 40)
         print("Function gettings "+imageData.debugDescription)
         convertImageToBitmap22(image: newImage)
+        printImage(image: newImage)
     }
     func convertImageToBitmap22(image: UIImage ) -> Data? {
            guard let cgImage = image.cgImage else {

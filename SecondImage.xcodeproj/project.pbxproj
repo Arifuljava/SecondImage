@@ -20,6 +20,20 @@
 		2581F01E2A1F1EC5000C6B0D /* Printer in Frameworks */ = {isa = PBXBuildFile; productRef = 2581F01D2A1F1EC5000C6B0D /* Printer */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXBuildRule section */
+		2581F01F2A1F4E7C000C6B0D /* PBXBuildRule */ = {
+			isa = PBXBuildRule;
+			compilerSpec = com.apple.compilers.proxy.script;
+			fileType = pattern.proxy;
+			inputFiles = (
+			);
+			isEditable = 1;
+			outputFiles = (
+			);
+			script = "# Type a script or drag a script file from your workspace to insert its path.\n";
+		};
+/* End PBXBuildRule section */
+
 /* Begin PBXContainerItemProxy section */
 		251286532A1DADDF0023707A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -182,6 +196,7 @@
 				2512865A2A1DADDF0023707A /* Resources */,
 			);
 			buildRules = (
+				2581F01F2A1F4E7C000C6B0D /* PBXBuildRule */,
 			);
 			dependencies = (
 				2512865E2A1DADDF0023707A /* PBXTargetDependency */,
@@ -437,6 +452,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
