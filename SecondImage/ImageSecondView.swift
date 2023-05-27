@@ -94,26 +94,28 @@ print(escposData)
         let newImage = convertImageToDifferentColorScale(with: UIImage(named: "sma")!, imageStyle: "CIPhotoEffectNoir")
                secondImage.image = newImage
       //  convertImageToBitmap(image: newImage)
-        guard let imageDatdda = convertImageToBitmap(image : newImage) else {
-                                                                        return }
+        covertToGrayScale(with: newImage)
+      //  guard let imageDatdda = convertImageToBitmap(image : newImage) else {
+                                                                     //   return }
         
-        convertImageToBitmap(image: newImage)
+        //convertImageToBitmap(image: newImage)
        
         //print(imageData.debugDescription)
        
+       
 
- guard let inmageDta = convertImageToBitmap22(image: newImage) else {
-     return
+// guard let inmageDta = convertImageToBitmap22(image: newImage) else {
+     //return
      
      
- }
- let datata = Data(inmageDta)
+ //}
+// let datata = Data(inmageDta)
  
 
- let  imageData : Data = convertImageToBitmap3(image: newImage) ?? datata
+// let  imageData : Data = convertImageToBitmap3(image: newImage) ?? datata
 // convertBitmapToImage(bitmapData: imageData, width: 40, height: 40)
- print("Function gettings "+imageData.debugDescription)
- convertImageToBitmap22(image: newImage)
+// print("Function gettings "+imageData.debugDescription)
+// convertImageToBitmap22(image: newImage)
 //  printImage(image: newImage)
 
  
@@ -243,9 +245,67 @@ print(escposData)
                   let dataSize = width * height
                   let buffer = UnsafeBufferPointer(start: bitmapData.assumingMemoryBound(to: UInt8.self), count: dataSize)
                   print("Bitmap Value : "+buffer.debugDescription)
+           //testing
+         
+           
+           //testing
          
                   
                   return Data(buffer: buffer)
               }
+    
+    
+    //sir given
+    
+    func covertToGrayScale(with image: UIImage) -> Data? {
+        print("good")
+        let width = Int(image.size.width)
+        let height = Int(image.size.height)
+        
+        // Pixels will be drawn in this array
+        var pixels = [UInt32](repeating: 0, count: width * height)
+        
+        let colorSpace = CGColorSpaceCreateDeviceRGB()
+        
+        // Create a context with pixels
+        guard let context = CGContext(data: &pixels, width: width, height: height, bitsPerComponent: 8, bytesPerRow: width * 4, space: colorSpace, bitmapInfo: CGImageAlphaInfo.noneSkipLast.rawValue | CGBitmapInfo.byteOrder32Little.rawValue) else {
+            return nil
+        }
+        
+        context.draw(image.cgImage!, in: CGRect(x: 0, y: 0, width: width, height: height))
+        
+        var tt = 1
+        var bw = 0
+        var bytes = [UInt8](repeating: 0, count: width / 8 * height)
+        var p = [Int](repeating: 0, count: 8)
+        
+        for y in 0..<height {
+            for x in 0..<(width / 8) {
+                for z in 0..<8 {
+                    let rgbaPixel = pixels[y * width + x * 8 + z]
+                    
+                    let red = (rgbaPixel >> 16) & 0xFF
+                    let green = (rgbaPixel >> 8) & 0xFF
+                    let blue = rgbaPixel & 0xFF
+                    let gray = 0.299 * Double(red) + 0.587 * Double(green) + 0.114 * Double(blue) // Grayscale conversion formula
+                    
+                    if gray <= 128 {
+                        p[z] = 0
+                    } else {
+                        p[z] = 1
+                    }
+                }
+                
+                let value = p[0] * 128 + p[1] * 64 + p[2] * 32 + p[3] * 16 + p[4] * 8 + p[5] * 4 + p[6] * 2 + p[7]
+                bytes[bw] = UInt8(value)
+                bw += 1
+            }
+        }
+        
+        let data = Data(bytes: bytes)
+        print("Good"+data.debugDescription)
+       
+        return data
+    }
  
 }
