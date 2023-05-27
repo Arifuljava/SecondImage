@@ -9,6 +9,7 @@ import UIKit
 
 class ImageSecondView: UIViewController {
     @IBOutlet weak var secondImage: UIImageView!
+    
     @IBOutlet weak var forth: UIImageView!
     @IBOutlet weak var clickbutton: UIButton!
     @IBOutlet weak var firstimage: UIImageView!
@@ -35,31 +36,88 @@ class ImageSecondView: UIViewController {
         printController.present(animated: true, completionHandler: nil)
     }
 
-    
+    func convertImageToESCPOSBitmap(image: UIImage) -> Data? {
+        guard let cgImage = image.cgImage else {
+            return nil
+        }
+
+        let bitmapInfo = CGBitmapInfo(rawValue: CGImageAlphaInfo.none.rawValue)
+        let context = CGContext(data: nil,
+                                width: cgImage.width,
+                                height: cgImage.height,
+                                bitsPerComponent: 8,
+                                bytesPerRow: 0,
+                                space: CGColorSpaceCreateDeviceGray(),
+                                bitmapInfo: bitmapInfo.rawValue)
+
+        guard let bitmapContext = context else {
+            return nil
+        }
+
+        let rect = CGRect(x: 0, y: 0, width: cgImage.width, height: cgImage.height)
+        bitmapContext.draw(cgImage, in: rect)
+
+        guard let data = bitmapContext.data else {
+            return nil
+        }
+
+        var escposData = Data()
+
+        // Add ESC/POS commands to set print mode and image size
+        let imageWidth = cgImage.width
+        let imageHeight = cgImage.height
+
+        let setPrintModeCommand: [UInt8] = [0x1B, 0x21, 0x00] // Set print mode: normal text
+        let setImageSizeCommand: [UInt8] = [0x1D, 0x76, 0x30, 0x00, UInt8(imageWidth), UInt8(imageWidth >> 8), UInt8(imageHeight), UInt8(imageHeight >> 8)] // Set image size
+
+        escposData.append(Data(setPrintModeCommand))
+        escposData.append(Data(setImageSizeCommand))
+
+        // Convert bitmap data to monochrome image data
+        for i in 0..<(imageWidth * imageHeight) {
+            let byte = data.load(fromByteOffset: i, as: UInt8.self)
+            escposData.append(byte)
+        }
+
+        // Append any necessary additional commands or data specific to your printer
+print(escposData)
+        let dataeeee = Data(base64Encoded: escposData)
+        let newIfmage = UIImage(data: dataeeee ?? escposData)
+        forth.image = newIfmage
+        print(dataeeee)
+       
+         
+        
+        return escposData
+    }
     @IBAction func clickedon(_ sender: UIButton) {
-        let newImage = convertImageToDifferentColorScale(with: UIImage(named: "small")!, imageStyle: "CIPhotoEffectNoir")
+        let newImage = convertImageToDifferentColorScale(with: UIImage(named: "sma")!, imageStyle: "CIPhotoEffectNoir")
                secondImage.image = newImage
-        convertImageToBitmap(image: newImage)
+      //  convertImageToBitmap(image: newImage)
         guard let imageDatdda = convertImageToBitmap(image : newImage) else {
                                                                         return }
         
+        convertImageToBitmap(image: newImage)
        
         //print(imageData.debugDescription)
        
-        guard let inmageDta = convertImageToBitmap22(image: newImage) else {
-            return
-            
-            
-        }
-        let datata = Data(inmageDta)
-        
-      
-        let  imageData : Data = convertImageToBitmap3(image: newImage) ?? datata
-       // convertBitmapToImage(bitmapData: imageData, width: 40, height: 40)
-        print("Function gettings "+imageData.debugDescription)
-        convertImageToBitmap22(image: newImage)
-        printImage(image: newImage)
-    }
+
+ guard let inmageDta = convertImageToBitmap22(image: newImage) else {
+     return
+     
+     
+ }
+ let datata = Data(inmageDta)
+ 
+
+ let  imageData : Data = convertImageToBitmap3(image: newImage) ?? datata
+// convertBitmapToImage(bitmapData: imageData, width: 40, height: 40)
+ print("Function gettings "+imageData.debugDescription)
+ convertImageToBitmap22(image: newImage)
+//  printImage(image: newImage)
+
+ 
+ }
     func convertImageToBitmap22(image: UIImage ) -> Data? {
            guard let cgImage = image.cgImage else {
                return nil

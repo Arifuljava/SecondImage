@@ -104,29 +104,30 @@
                                                     <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="128" id="uLG-lc-AeO"/>
                                                 </constraints>
                                             </imageView>
-                                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="cVH-um-s8c">
-                                                <rect key="frame" x="87" y="555" width="240" height="128"/>
+                                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="6p8-9W-zRK">
+                                                <rect key="frame" x="100" y="549" width="50" height="50"/>
                                                 <constraints>
-                                                    <constraint firstAttribute="height" constant="128" id="A7y-GZ-hWt"/>
+                                                    <constraint firstAttribute="height" constant="50" id="JeR-LP-S6w"/>
+                                                    <constraint firstAttribute="width" constant="50" id="w24-Pj-UAf"/>
                                                 </constraints>
                                             </imageView>
                                         </subviews>
                                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                         <constraints>
                                             <constraint firstAttribute="trailing" secondItem="Rg9-LR-lKB" secondAttribute="trailing" constant="8" id="2lp-4X-aem"/>
-                                            <constraint firstItem="cVH-um-s8c" firstAttribute="leading" secondItem="GoE-Ga-QdF" secondAttribute="leading" constant="87" id="7Tf-wB-Yx7"/>
                                             <constraint firstItem="dim-jT-vZf" firstAttribute="leading" secondItem="GoE-Ga-QdF" secondAttribute="leading" constant="8" id="ATt-Un-foC"/>
                                             <constraint firstItem="Dr3-xG-mWw" firstAttribute="top" secondItem="Rg9-LR-lKB" secondAttribute="bottom" constant="46" id="B54-iU-dCp"/>
+                                            <constraint firstItem="6p8-9W-zRK" firstAttribute="top" secondItem="dim-jT-vZf" secondAttribute="bottom" constant="27" id="CCY-gu-hnW"/>
                                             <constraint firstAttribute="trailing" secondItem="dim-jT-vZf" secondAttribute="trailing" constant="8" id="DQ2-q7-Mb8"/>
                                             <constraint firstItem="dim-jT-vZf" firstAttribute="top" secondItem="Dr3-xG-mWw" secondAttribute="bottom" constant="12" id="HOc-d5-MdJ"/>
                                             <constraint firstAttribute="trailing" secondItem="xl0-SI-ZUf" secondAttribute="trailing" constant="87" id="NZ5-xV-ZHw"/>
                                             <constraint firstItem="xl0-SI-ZUf" firstAttribute="leading" secondItem="GoE-Ga-QdF" secondAttribute="leading" constant="87" id="Pa5-1O-wDI"/>
-                                            <constraint firstAttribute="trailing" secondItem="cVH-um-s8c" secondAttribute="trailing" constant="87" id="TYJ-ds-dTE"/>
                                             <constraint firstItem="Rg9-LR-lKB" firstAttribute="top" secondItem="xl0-SI-ZUf" secondAttribute="bottom" constant="30" id="X1T-Dh-ipK"/>
+                                            <constraint firstAttribute="trailing" secondItem="6p8-9W-zRK" secondAttribute="trailing" constant="74" id="ZSc-Vv-RY0"/>
                                             <constraint firstItem="xl0-SI-ZUf" firstAttribute="top" secondItem="GoE-Ga-QdF" secondAttribute="top" constant="93" id="ZlQ-eG-T4b"/>
                                             <constraint firstItem="Dr3-xG-mWw" firstAttribute="leading" secondItem="GoE-Ga-QdF" secondAttribute="leading" constant="87" id="abz-L6-IHy"/>
                                             <constraint firstItem="Rg9-LR-lKB" firstAttribute="leading" secondItem="GoE-Ga-QdF" secondAttribute="leading" constant="8" id="dZK-vb-JFp"/>
-                                            <constraint firstItem="cVH-um-s8c" firstAttribute="top" secondItem="dim-jT-vZf" secondAttribute="bottom" constant="33" id="kqD-v2-IOe"/>
+                                            <constraint firstItem="6p8-9W-zRK" firstAttribute="leading" secondItem="GoE-Ga-QdF" secondAttribute="leading" constant="100" id="gJC-Dh-VLf"/>
                                             <constraint firstAttribute="trailing" secondItem="Dr3-xG-mWw" secondAttribute="trailing" constant="87" id="p80-iO-YxW"/>
                                         </constraints>
                                     </view>
@@ -159,7 +160,7 @@
                     <connections>
                         <outlet property="clickbutton" destination="Rg9-LR-lKB" id="hVk-gW-6vf"/>
                         <outlet property="firstimage" destination="xl0-SI-ZUf" id="wLw-z4-pOV"/>
-                        <outlet property="forth" destination="cVH-um-s8c" id="7DB-xI-7FK"/>
+                        <outlet property="forth" destination="6p8-9W-zRK" id="hzs-1M-Aam"/>
                         <outlet property="secondImage" destination="Dr3-xG-mWw" id="F2Y-Ht-MKJ"/>
                     </connections>
                 </viewController>

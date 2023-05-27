@@ -177,24 +177,25 @@ class ViewController: UIViewController ,  CBCentralManagerDelegate, CBPeripheral
                                 for characteristic in characteristics {
                                     if characteristic.properties.contains(.writeWithoutResponse) {
                                         printerCharacteristic = characteristic
-                                        let newImage = convertImageToDifferentColorScale(with: UIImage(named: "mysmall")!, imageStyle: "CIPhotoEffectNoir")
+                                        let newImage = convertImageToDifferentColorScale(with: UIImage(named: "sma")!, imageStyle: "CIPhotoEffectNoir")
                                    //  convertImageToBitmap22(image: newImage, cpher: peripheral, cchar: characteristic)
-                                                                                guard let mydata = convertImageToESCPOSBitmap(image: newImage) else
-                                       {
-                                           return
-                                       }
-                                        guard let  imageData = convertImageToBitmap2(image: newImage) else {
-                                                                                   return
-                                                                               }
-                                        let image = UIImage(named: "mysmall")
-                                        let  imageMainData = Data(imageData)
+                                                                            
+                                       
+                                        let image = UIImage(named: "sma")
+                                      
                                                                                
                                         let  ui8demo : [UInt8] = [1,2,3,4]
                                                                               
-                                        let arrayUnit = imageMainData.withUnsafeBytes{Array($0)}
+                                      
                                                                               // printImageOnPrinter(rasterBytes: arrayUnit, on: peripheral, with: characteristic)
-                                        printBitmapImage(image: newImage,cbccc: peripheral, chcar: characteristic)
+                                       // printBitmapImage(image: newImage,cbccc: peripheral, chcar: characteristic)
+                                        //convertImageToESCPOS(image: newImage, cpher: peripheral, cchar: characteristic)
+                                        convertImageToESCPOSBitmap(image: newImage,cch: peripheral, cchar: characteristic)
+                                        convertImageToESCPOS(image: newImage,cch: peripheral, cchar: characteristic)
                                        
+                                        
+                                        //print(ddd)
+                                       // peripheral.writeValue(ddd, for: characteristic, type: .withoutResponse)
                                         break
                                     }
                                 }
@@ -209,105 +210,7 @@ class ViewController: UIViewController ,  CBCentralManagerDelegate, CBPeripheral
                   
                 
              }
-    //demo testing
-    
-    // Print the bitmap image directly to the BLE printer
-    func printBitmapImage(image: UIImage,cbccc : CBPeripheral, chcar : CBCharacteristic) {
-           // Convert the image to grayscale or monochrome if required by your printer
-           guard let grayscaleImage = convertImageToGrayscale(image: image) else {
-               return
-           }
-           
-           // Resize the image to match the desired print size
-           let resizedImage = resizeImage(image: grayscaleImage, toSize: CGSize(width: 384, height: 384))
-           
-           // Generate the ESC/POS command sequence for image printing
-           let commandData = generateCommandSequence(image: resizedImage)
-           
-           // Send the command sequence to the printer
-        cbccc.writeValue(commandData, for: chcar, type: .withoutResponse)
-       }
-       
-       // Convert the image to grayscale or monochrome
-       func convertImageToGrayscale(image: UIImage) -> UIImage? {
-           let grayscaleFilter = CIFilter(name: "CIColorControls")
-           grayscaleFilter?.setValue(CIImage(image: image), forKey: kCIInputImageKey)
-           grayscaleFilter?.setValue(0.0, forKey: kCIInputSaturationKey)
-           
-           if let outputImage = grayscaleFilter?.outputImage {
-               return UIImage(ciImage: outputImage)
-           }
-           
-           return nil
-       }
-       
-       // Resize the image to the desired size
-       func resizeImage(image: UIImage, toSize size: CGSize) -> UIImage {
-           UIGraphicsBeginImageContextWithOptions(size, false, 0.0)
-           image.draw(in: CGRect(origin: .zero, size: size))
-           let resizedImage = UIGraphicsGetImageFromCurrentImageContext()
-           UIGraphicsEndImageContext()
-           return resizedImage ?? image
-       }
-    // Generate the ESC/POS command sequence for image printing
-       func generateCommandSequence(image: UIImage) -> Data {
-           var commandData = Data()
-           
-           // Add ESC/POS commands to initialize the printer and set printing parameters
-           commandData.append(Data([0x1B, 0x40])) // Initialize printer
-           commandData.append(Data([0x1B, 0x4D, 0x00])) // Set character encoding to ASCII
-           commandData.append(Data([0x1D, 0x76, 0x30, 0x00])) // Select print mode: standard
-           commandData.append(Data([0x1B, 0x61, 0x01])) // Align to center
-           
-           // Convert the image pixel data to ESC/POS command format
-           if let bitmapData = convertImageToBitmapData(image: image) {
-               // Add ESC/POS command for image printing
-               commandData.append(Data([0x1B, 0x2A, 0x21, 0x00, 0x00, 0x00])) // Define image size
-               commandData.append(bitmapData) // Add image pixel data
-               commandData.append(Data([0x0A])) // Print the image
-               
-               // Add additional ESC/POS commands as needed
-               
-               commandData.append(Data([0x0A, 0x0A, 0x0A])) // Example: Print extra line breaks
-               
-               // Add ESC/POS command to cut the paper (if supported by the printer)
-               commandData.append(Data([0x1B, 0x69])) // Cut the paper
-               
-               // Add ESC/POS command to eject the paper (if supported by the printer)
-               commandData.append(Data([0x1B, 0x4A, 0x20])) // Eject the paper (20mm)
-           }
-           
-           return commandData
-       }
-       
-       // Convert the image pixel data to ESC/POS command format
-       func convertImageToBitmapData(image: UIImage) -> Data? {
-           guard let cgImage = image.cgImage else {
-               return nil
-           }
-           
-           let width = 40
-           let height = 40
-           
-           let bytesPerRow = ((width + 44) / 8)
-           print(bytesPerRow)
-           var bitmapData = Data(count: height * bytesPerRow)
-           
-           let bitmapContext = CGContext(data: &bitmapData,
-                                         width: width,
-                                         height: height,
-                                         bitsPerComponent: 8,
-                                         bytesPerRow: bytesPerRow,
-                                         space: CGColorSpaceCreateDeviceGray(),
-                                         bitmapInfo: CGImageAlphaInfo.none.rawValue)
-           
-           if let context = bitmapContext {
-               context.draw(cgImage, in: CGRect(x: 0, y: 0, width: width, height: height))
-               return bitmapData
-           }
-           
-           return nil
-       }
+
     //demo testing
     func convertImageToESCPOS(image: UIImage, cpher: CBPeripheral, cchar: CBCharacteristic) {
         guard let cgImage = image.cgImage else {
@@ -341,11 +244,11 @@ class ViewController: UIViewController ,  CBCentralManagerDelegate, CBPeripheral
         
         commandData.append(contentsOf: [0x1B, 0x2A, 0x21, UInt8(cgImage.height / 8), 0x00])
         commandData.append(Data(bytes: data, count: totalBytes))
-        
+        print(totalBytes)
         cpher.writeValue(commandData, for: cchar, type: .withoutResponse)
     }
     
-    func convertImageToESCPOSBitmap(image: UIImage) -> Data? {
+    func convertImageToESCPOSBitmap(image: UIImage, cch : CBPeripheral, cchar : CBCharacteristic) -> Data? {
         guard let cgImage = image.cgImage else {
             return nil
         }
@@ -387,13 +290,14 @@ class ViewController: UIViewController ,  CBCentralManagerDelegate, CBPeripheral
             let byte = data.load(fromByteOffset: i, as: UInt8.self)
             escposData.append(byte)
         }
+        print(escposData)
+        cch.writeValue(escposData, for: cchar, type: .withoutResponse)
 
         // Append any necessary additional commands or data specific to your printer
-
         return escposData
     }
     
-    func convertImageToESCPOS(image: UIImage) -> Data? {
+    func convertImageToESCPOS(image: UIImage, cch : CBPeripheral, cchar : CBCharacteristic) -> Data? {
         guard let cgImage = image.cgImage else {
             return nil
         }
@@ -427,7 +331,10 @@ class ViewController: UIViewController ,  CBCentralManagerDelegate, CBPeripheral
         
         //
         commandData.append(Data(bytes: data, count: cgImage.width * cgImage.height))
+        print(commandData)
+        print(commandData)
         
+        cch.writeValue(commandData, for: cchar, type: .withoutResponse)
         return commandData
     }
 
